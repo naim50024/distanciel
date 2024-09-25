@@ -1,4 +1,5 @@
-cversion: '3'
+version: '3'
+
 services:
   db:
     container_name: db
@@ -14,6 +15,18 @@ services:
       - ./files:/files
     ports:
       - 55432:5432
+    networks:
+      - db
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: db
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
     networks:
       - db
 
@@ -35,19 +48,6 @@ services:
     networks:
       - db
 
-  app:
-    build:
-      context: ./app
-      dockerfile: Dockerfile
-    environment:
-      DB_HOST: db
-    depends_on:
-      - db
-    ports:
-      - "8000:8000"
-    networks:
-      - db
-
 networks:
   db:
     driver: bridge
@@ -61,4 +61,3 @@ volumes:
     driver: local
   postgresql_bin:
     driver: local
-
